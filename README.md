@@ -17,7 +17,7 @@ std::cin >> lexer;
 ##Parser
 `Input`
 ```Cpp
-Parser& operator>>(const Lexer& lexer, Parser& parser);
+Parser& operator >>(const Lexer& lexer, Parser& parser);
 ```
 `Example`
 ```Cpp
