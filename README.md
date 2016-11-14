@@ -3,7 +3,7 @@ A far-from-complete C compiler, including a lexer and an expression parser so fa
 ##Lexer
 `Constructor`
 ```Cpp
-Lexer(char end_char = EOF); //constructs a lexer which stops analysis at end_char
+Lexer(char end_char = EOF); //constructs a lexer which stops analysis at end_char, typically EOF or '\n'
 ```
 `Input`
 ```Cpp
