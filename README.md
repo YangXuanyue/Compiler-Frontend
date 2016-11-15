@@ -3,11 +3,14 @@ A far-from-complete C compiler, including a lexer and an expression parser so fa
 ##Lexer
 `Constructor`
 ```Cpp
-Lexer(char end_char = EOF); //constructs a lexer which stops analysis at end_char, typically EOF or '\n'
+//constructs a lexer which stops analysis at end_char, typically EOF or '\n'
+Lexer(char end_char = EOF); 
 ```
 `Input`
 ```Cpp
-const Lexer& operator >>(std::istream& in, Lexer& lexer);
+//returns a ref of lexer in order to be followed by a parser
+//nothing more than a grammar sugar
+const Lexer& operator >>(std::istream& in, Lexer& lexer); 
 ```
 `Example`
 ```Cpp
