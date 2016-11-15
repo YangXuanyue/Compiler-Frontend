@@ -1,7 +1,7 @@
 #ifndef LEXER_RESERVEDWORDS_H
 #define LEXER_RESERVEDWORDS_H
 
-#include "Trie.h"
+#include "../Trie.h"
 #include "../TokenType.h"
 
 class ReservedWords {

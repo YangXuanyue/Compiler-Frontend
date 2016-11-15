@@ -83,6 +83,7 @@ Parser& operator >>(const Lexer& lexer, Parser& parser) {
 		}
 		cout << endl;
 	}
+	cout << endl;
 	return parser;
 }
 

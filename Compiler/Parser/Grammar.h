@@ -27,18 +27,18 @@ private:
 	vector<set<Symbol>> first_of_production;
 	map<Symbol, bool> has_constructed_first, has_constructed_follow;
 
+public:
+	Grammar();
+	~Grammar();
 	void print_productions();
 	void print_first();
 	void print_follow();
-	void eliminate_left_recursion();
+	void remove_left_recursion();
+	void extract_common_left_factor();
 	void construct_first();
 	void construct_first(Symbol nonterminal);
 	void construct_follow();
 	void construct_follow(Symbol nonterminal);
-
-public:
-	Grammar();
-	~Grammar();
 
 	const Symbol& get_start_symbol() const {
 		//cout << start_symbol << endl;

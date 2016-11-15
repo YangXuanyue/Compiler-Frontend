@@ -22,7 +22,6 @@ Lexer::Lexer(char _end_char) :
 const Lexer& operator >>(istream& in, Lexer& lexer) {
 	lexer.token_stream.clear();
 	symbol_table.clear();
-	lexer.pos_in_symbol_table = new Trie<int, Lexer::NOT_FOUND>(Lexer::MAX_TRIE_SIZE);
 	lexer.dfa->init();
 	lexer.char_cnt = 0;
 	fill(lexer.token_type_cnts.begin(), lexer.token_type_cnts.end(), 0);
@@ -30,6 +29,7 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 
 	Token cur_token;
 	string cur_symbol;
+	Trie<int, Lexer::NOT_FOUND> pos_in_symbol_table(Lexer::MAX_TRIE_SIZE);
 	int cur_row(1), cur_col(1);
 	bool reaches_end = false; 
 	bool expects_new_token = true; 
@@ -81,10 +81,10 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 				case NUMERIC_CONSTANT:
 				case CHAR_CONSTANT:
 				case STRING_LITERAL: {
-					int pos(lexer.pos_in_symbol_table->search(cur_symbol));
+					int pos(pos_in_symbol_table.search(cur_symbol));
 					if (pos == Lexer::NOT_FOUND) {
 						pos = symbol_table.size();
-						lexer.pos_in_symbol_table->insert(cur_symbol, pos);
+						pos_in_symbol_table.insert(cur_symbol, pos);
 						symbol_table.push_back(cur_symbol);
 					}
 					cur_token.symbol_pos = pos;

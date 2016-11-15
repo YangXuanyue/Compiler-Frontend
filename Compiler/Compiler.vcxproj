@@ -22,7 +22,6 @@
     <ClCompile Include="Lexer\DFA.cpp" />
     <ClCompile Include="Lexer\Lexer.cpp" />
     <ClCompile Include="Lexer\ReservedWords.cpp" />
-    <ClCompile Include="Lexer\Trie.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Parser\Grammar.cpp" />
     <ClCompile Include="Parser\Parser.cpp" />
@@ -36,7 +35,6 @@
     <ClInclude Include="Lexer\DFA.h" />
     <ClInclude Include="Lexer\Lexer.h" />
     <ClInclude Include="Lexer\ReservedWords.h" />
-    <ClInclude Include="Lexer\Trie.h" />
     <ClInclude Include="Parser\Grammar.h" />
     <ClInclude Include="Parser\Parser.h" />
     <ClInclude Include="Parser\Production.h" />
@@ -44,12 +42,13 @@
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="TokenType.h" />
+    <ClInclude Include="Trie.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29505A08-9621-41AD-9907-AB35D59B6274}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Compiler</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

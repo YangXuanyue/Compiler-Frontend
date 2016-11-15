@@ -23,9 +23,6 @@
     <ClCompile Include="Lexer\ReservedWords.cpp">
       <Filter>Lexer</Filter>
     </ClCompile>
-    <ClCompile Include="Lexer\Trie.cpp">
-      <Filter>Lexer</Filter>
-    </ClCompile>
     <ClCompile Include="Parser\Grammar.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
@@ -50,9 +47,6 @@
     <ClInclude Include="Lexer\ReservedWords.h">
       <Filter>Lexer</Filter>
     </ClInclude>
-    <ClInclude Include="Lexer\Trie.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
     <ClInclude Include="Parser\Grammar.h">
       <Filter>Parser</Filter>
     </ClInclude>
@@ -68,5 +62,6 @@
     <ClInclude Include="Parser\Symbol.h">
       <Filter>Parser</Filter>
     </ClInclude>
+    <ClInclude Include="Trie.h" />
   </ItemGroup>
 </Project>
