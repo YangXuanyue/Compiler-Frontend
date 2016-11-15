@@ -1,5 +1,5 @@
 # Compiler
-A far-from-complete C compiler, including a lexer and an expression parser so far, project for course Compiler Principle and Technology.
+A far-from-complete C compiler, including a lexer and an expression parser so far, project for course `Compiler Principle and Technology`.
 ##Lexer
 `Constructor`
 ```Cpp
