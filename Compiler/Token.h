@@ -15,23 +15,23 @@ struct Token {
 	friend ostream& operator <<(ostream& out, const Token& rhs) {
 		out << "<" << token_type_strings[rhs.type] << ", \"";
 		if (rhs.type < PREPROCESSOR) {
-			out << token_vals[rhs.symbol_pos];
+			out << token_vals[rhs.symbol_idx];
 		} else {
-			out << symbol_table[rhs.symbol_pos];
+			out << symbol_table[rhs.symbol_idx];
 		}
 		out << "\"> in (" << rhs.row << " : " << rhs.col << ")\n";
 		return out;
 	}
 
 	TokenType type;
-	int symbol_pos;
+	int symbol_idx;
 	int row, col;
 	
 	Token(TokenType _type = UNKNOWN,
 	      int _symbolPos = -1,
 	      int _row = 1,
 	      int _col = 1) :
-		type(_type), symbol_pos(_symbolPos), row(_row), col(_col) {
+		type(_type), symbol_idx(_symbolPos), row(_row), col(_col) {
 	}
 };
 

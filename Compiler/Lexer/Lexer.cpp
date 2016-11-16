@@ -26,7 +26,7 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 
 	Token cur_token;
 	string cur_symbol;
-	Trie<int, Lexer::NOT_FOUND> pos_in_symbol_table(Lexer::MAX_TRIE_SIZE);
+	Trie<int, Lexer::NOT_FOUND> idx_in_symbol_table(Lexer::MAX_TRIE_SIZE);
 	int cur_row(1), cur_col(1);
 	bool reaches_end = false; 
 	bool expects_new_token = true; 
@@ -78,17 +78,17 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 				case NUMERIC_CONSTANT:
 				case CHAR_CONSTANT:
 				case STRING_LITERAL: {
-					int pos(pos_in_symbol_table.search(cur_symbol));
+					int pos(idx_in_symbol_table.search(cur_symbol));
 					if (pos == Lexer::NOT_FOUND) {
 						pos = symbol_table.size();
-						pos_in_symbol_table.insert(cur_symbol, pos);
+						idx_in_symbol_table.insert(cur_symbol, pos);
 						symbol_table.push_back(cur_symbol);
 					}
-					cur_token.symbol_pos = pos;
+					cur_token.symbol_idx = pos;
 					break;
 				}
 				default:
-					cur_token.symbol_pos = cur_token.type;
+					cur_token.symbol_idx = cur_token.type;
 			}
 			lexer.token_stream.push_back(cur_token); 
 			++lexer.token_type_cnts[cur_token.type]; 
@@ -98,13 +98,13 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 		lexer.rowCnt = cur_row;
 	}
 	lexer.token_stream.emplace_back(END, END, -1, -1);
-
+	/*
 	cout << "lexer outputs:\n";
 	for (const auto& token : lexer.token_stream) {
 		cout << "\t\t\t\t" << token;
 	}
 	cout << endl;
-
+	*/
 	return lexer;
 }
 

@@ -4,36 +4,100 @@
 using std::cout;
 using std::endl;
 
-Grammar::Grammar() :
-	//how to make this configurable?
-	//what format should be adopted in the config file?
-	nonterminals({"E", "T", "F"}),
-	terminals({
-		ADD, SUB, ASTERISK, DIV, L_PAREN, R_PAREN, NUMERIC_CONSTANT, END
-	}),
-	start_symbol("E"),
-	productions({
-		{"E", {"E", ADD, "T"}},
-		{"E", {"E", SUB, "T"}},
-		{"E", {"T"}},
-		{"T", {"T", ASTERISK, "F"}},
-		{"T", {"T", DIV, "F"}},
-		{"T", {"F"}},
-		{"F", {L_PAREN, "E", R_PAREN}},
-		{"F", {NUMERIC_CONSTANT}}
-	}) {
+Grammar::Grammar() {
+	load_grammar();
 	int cur_idx = 0;
 	for (const auto& production : productions) {
 		production_idxes[production.left].insert(cur_idx++);
 	}
+	print_productions();
 	remove_left_recursion();
-	//print_productions();
+	print_productions();
 	extract_common_left_factor();
 	print_productions();
 	construct_first();
-	//print_first();
+	print_first();
 	construct_follow();
-	//print_follow();
+	print_follow();
+}
+
+#include "../Lexer/Lexer.h"
+#include <fstream>
+
+using std::ifstream;
+
+void Grammar::load_grammar() {
+	Lexer lexer;
+	ifstream in("../Compiler/Parser/Grammar.ini");
+	in >> lexer;
+	const vector<Token>& token_stream(lexer.get_token_stream());
+	int i(0);
+	for (; token_stream[i].type != L_BRACE; ++i);
+	for (++i; token_stream[i].type != R_BRACE; ++i) {
+		nonterminals.push_back(
+			symbol_table[
+				token_stream[i].symbol_idx
+			]
+		);
+	}
+	//load terminals
+	for (; token_stream[i].type != L_BRACE; ++i);
+	for (++i; token_stream[i].type != R_BRACE; ++i) {
+		TokenType type(token_stream[i].type);
+		if (token_stream[i].type == IDENTIFIER) {
+			type = string_to_token_type[ //where "num" would map to NUMERIC_CONSTANT
+				symbol_table[
+					token_stream[i].symbol_idx
+				]
+			];
+		}
+		nonterminals.emplace_back(type);
+	}
+	//load start_symbol
+	for (; token_stream[i].type != L_BRACE; ++i);
+	for (++i; token_stream[i].type != R_BRACE; ++i) {
+		start_symbol = symbol_table[
+			token_stream[i].symbol_idx
+		];
+	}
+	cout << "done start_symbol\n";
+	//load productions
+	for (; token_stream[i].type != L_BRACE; ++i);
+	while (token_stream[i + 1].type != R_BRACE) {
+		for (++i; token_stream[i].type == L_BRACE; ++i);
+		Symbol nonterminal(
+			symbol_table[
+				token_stream[i].symbol_idx
+			]
+		);
+		for (; token_stream[i].type != ARROW; ++i);
+		production_idxes[nonterminal].insert(productions.size());
+		productions.emplace_back(nonterminal);
+		for (++i; token_stream[i].type != R_BRACE; ++i) {
+			if (token_stream[i].type != BITWISE_OR) {
+				TokenType type(token_stream[i].type);
+				if (type == IDENTIFIER) {
+					type = string_to_token_type[
+						symbol_table[
+							token_stream[i].symbol_idx
+						]
+					];
+				}
+				if (type != IDENTIFIER) {
+					productions.back().right.emplace_back(type);
+				} else {
+					productions.back().right.emplace_back(
+						symbol_table[
+							token_stream[i].symbol_idx
+						]
+					);
+				}
+			} else {
+				production_idxes[nonterminal].insert(productions.size());
+				productions.emplace_back(nonterminal);
+			}
+		}
+	}
 }
 
 void Grammar::print_productions() {

@@ -1,11 +1,9 @@
-#ifndef LEXER_LEXER_H
-#define LEXER_LEXER_H
+#pragma once
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include "../Token.h"
-//#include "ReservedWords.h"
 #include "DFA.h"
 
 using std::istream;
@@ -37,5 +35,3 @@ public:
 		return token_stream;
 	}
 };
-
-#endif //LEXER_LEXER_H

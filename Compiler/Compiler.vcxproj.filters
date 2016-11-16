@@ -58,4 +58,9 @@
     </ClInclude>
     <ClInclude Include="Trie.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Parser\Grammar.ini">
+      <Filter>Parser</Filter>
+    </None>
+  </ItemGroup>
 </Project>

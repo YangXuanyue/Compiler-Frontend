@@ -30,6 +30,7 @@ private:
 public:
 	Grammar();
 	~Grammar();
+	void load_grammar();
 	void print_productions();
 	void print_first();
 	void print_follow();
