@@ -51,7 +51,7 @@ void Grammar::load_grammar() {
 				]
 			];
 		}
-		nonterminals.emplace_back(type);
+		terminals.emplace_back(type);
 	}
 	//load start_symbol
 	for (; token_stream[i].type != L_BRACE; ++i);
@@ -60,7 +60,6 @@ void Grammar::load_grammar() {
 			token_stream[i].symbol_idx
 		];
 	}
-	cout << "done start_symbol\n";
 	//load productions
 	for (; token_stream[i].type != L_BRACE; ++i);
 	while (token_stream[i + 1].type != R_BRACE) {
@@ -144,24 +143,37 @@ void Grammar::remove_left_recursion() {
 	set<Symbol> vis_nonterminals;
 	vector<Symbol> new_nonterminals;
 	for (const auto& nonterminal : nonterminals) {
+		//cout << "nonterminal = " << nonterminal << endl;
 		set<int> new_production_idxes(production_idxes[nonterminal]);
 		for (int i : production_idxes[nonterminal]) {
-			const Symbol& first_symbol(productions[i].right.front());
+			Symbol first_symbol(productions[i].right.front());
+			//cout << productions[i] << "first_symbol = " << first_symbol << endl;
 			if (vis_nonterminals.find(first_symbol) != vis_nonterminals.end()) {
 				new_production_idxes.erase(i);
-				Production tmp_production(std::move(productions[i]));
-				tmp_production.right.pop_front();
+				productions[i].right.pop_front();
+				//cout << "first_symbol = " << first_symbol << endl;
 				for (int j : production_idxes[first_symbol]) {
+					//cout << "add " << j << endl;
 					new_production_idxes.insert(productions.size());
-					Production new_production(tmp_production);
+					Production new_production(productions[i]);
 					new_production.right.insert(
 						new_production.right.begin(),
 						productions[j].right.begin(),
 						productions[j].right.end()
 					);
+					productions.emplace_back(std::move(new_production));
 				}
 			}
 		}
+		/*cout << nonterminal << endl;
+		for (int i : production_idxes[nonterminal]) {
+			cout << i << " ";
+		}
+		cout << endl;
+		for (int i : new_production_idxes) {
+			cout << i << " ";
+		}
+		cout << endl;*/
 		production_idxes[nonterminal] = new_production_idxes;
 		vector<int> left_recursive_production_idxes;
 		for (int i : production_idxes[nonterminal]) {
@@ -190,11 +202,9 @@ void Grammar::remove_left_recursion() {
 		}
 		vis_nonterminals.insert(nonterminal);
 	}
-	nonterminals.insert(
-		nonterminals.end(),
-		new_nonterminals.begin(),
-		new_nonterminals.end()
-	);
+	for (auto& new_nonterminal : new_nonterminals) {
+		nonterminals.emplace_back(std::move(new_nonterminal));
+	}
 }
 
 #include "../Trie.h"
@@ -293,9 +303,13 @@ void Grammar::extract_common_left_factor() {
 					production_idxes[new_nonterminal].insert(i);
 				}
 				production_idxes[nonterminal].insert(productions.size());
+				new_production.right.emplace_back(std::move(new_nonterminal));
 				productions.emplace_back(std::move(new_production));
 			}
 		}	
+	}
+	for (auto& new_nonterminal : new_nonterminals) {
+		nonterminals.emplace_back(std::move(new_nonterminal));
 	}
 }
 
@@ -342,6 +356,21 @@ void Grammar::construct_follow() {
 			construct_follow(nonterminal);
 		}
 	}
+	for (const auto& nonterminal : nonterminals) {
+		for (const auto& another_nonterminal : nonterminals) {
+			if (includes_follow_of[nonterminal][another_nonterminal]
+				&& includes_follow_of[another_nonterminal][nonterminal]) {
+				follow[nonterminal].insert(
+					follow[another_nonterminal].begin(),
+					follow[another_nonterminal].end()
+				);
+				follow[another_nonterminal].insert(
+					follow[nonterminal].begin(),
+					follow[nonterminal].end()
+				);
+			}
+		}
+	}
 }
 
 void Grammar::construct_follow(const Symbol& nonterminal) {
@@ -368,17 +397,22 @@ void Grammar::construct_follow(const Symbol& nonterminal) {
 					}
 					if (k == production.right.size()
 						&& production.left != nonterminal) {
-						if (!has_constructed_follow[production.left]) {
-							construct_follow(production.left);
+						const auto& another_nonterminal(production.left);
+						includes_follow_of[nonterminal][another_nonterminal] = true;
+						if (!includes_follow_of[another_nonterminal][nonterminal]) {
+							if (!has_constructed_follow[another_nonterminal]) {
+								construct_follow(another_nonterminal);
+							}
+							follow[nonterminal].insert(
+								follow[another_nonterminal].begin(),
+								follow[another_nonterminal].end()
+							);
 						}
-						follow[nonterminal].insert(
-							follow[production.left].begin(),
-							follow[production.left].end()
-						);
 					}
 				}
 			}
 		}
 	}
+	has_constructed_follow[nonterminal] = true;
 }
 

@@ -26,6 +26,7 @@ private:
 	vector<set<Symbol>> first_of_production;
 	map<Symbol, set<Symbol>> first, follow;
 	map<Symbol, bool> has_constructed_first, has_constructed_follow;
+	map<Symbol, map<Symbol, bool>> includes_follow_of;
 
 public:
 	Grammar();
