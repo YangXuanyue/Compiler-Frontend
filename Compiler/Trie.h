@@ -1,5 +1,4 @@
-#ifndef LEXER_TRIE_H
-#define LEXER_TRIE_H
+#pragma once
 
 #include <cstring>
 #include <vector>
@@ -51,7 +50,7 @@ public:
 		nodes.resize(max_size);
 		clear();
 	}
-	
+
 	void clear() {
 		size = 0;
 		root = new_node();
@@ -92,4 +91,3 @@ public:
 	}
 };
 
-#endif //LEXER_TRIE_H

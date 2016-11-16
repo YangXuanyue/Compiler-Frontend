@@ -20,9 +20,6 @@
     <ClCompile Include="Lexer\Lexer.cpp">
       <Filter>Lexer</Filter>
     </ClCompile>
-    <ClCompile Include="Lexer\ReservedWords.cpp">
-      <Filter>Lexer</Filter>
-    </ClCompile>
     <ClCompile Include="Parser\Grammar.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
@@ -42,9 +39,6 @@
       <Filter>Lexer</Filter>
     </ClInclude>
     <ClInclude Include="Lexer\Lexer.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="Lexer\ReservedWords.h">
       <Filter>Lexer</Filter>
     </ClInclude>
     <ClInclude Include="Parser\Grammar.h">

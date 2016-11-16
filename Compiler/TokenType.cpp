@@ -1,6 +1,6 @@
 #include "TokenType.h"
 
-const array<string, TOKEN_TYPE_NUM> token_type_strs = {
+const array<string, TOKEN_TYPE_NUM> token_type_strings = {
 	"UNKNOWN",
 	"CHAR",
 	"INT",
@@ -172,17 +172,36 @@ const array<string, TOKEN_TYPE_NUM> token_vals = {
 	")",
 	"end",
 	"epsilon",
-	"",
-	"",
-	"",
-	"",
+	"preprocessor",
+	"line_coment",
+	"block_comment",
+	"id",
 	"num",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	""
+	"char_constant",
+	"string_literal",
+	"INCOMPLETE_NUMERIC_CONSTANT_ERROR",
+	"UNCLOSED_BLOCK_COMMENT_ERROR",
+	"UNCLOSED_CHAR_CONSTANT_ERROR",
+	"UNCLOSED_STRING_LITERAL_ERROR",
+	"ILLEGAL_CHAR_ERROR",
 };
+
+#include "Trie.h"
+
+StringToTokenType::StringToTokenType(TokenType first_type, TokenType last_type) {
+	trie = new Trie<TokenType, IDENTIFIER>(MAX_TRIE_SIZE);
+	for (int type(first_type); type <= last_type; ++type) {
+		trie->insert(token_vals[type], TokenType(type));
+	}
+}
+
+StringToTokenType::~StringToTokenType() {
+	delete trie;
+}
+
+TokenType StringToTokenType::operator [](const string& word) const {
+	return trie->search(word);
+}
+
+StringToTokenType string_to_token_type(UNKNOWN, ILLEGAL_CHAR_ERROR);
+StringToTokenType reserved_words(CHAR, RETURN);

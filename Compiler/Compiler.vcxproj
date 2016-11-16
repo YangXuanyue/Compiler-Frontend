@@ -21,7 +21,6 @@
   <ItemGroup>
     <ClCompile Include="Lexer\DFA.cpp" />
     <ClCompile Include="Lexer\Lexer.cpp" />
-    <ClCompile Include="Lexer\ReservedWords.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Parser\Grammar.cpp" />
     <ClCompile Include="Parser\Parser.cpp" />
@@ -34,7 +33,6 @@
   <ItemGroup>
     <ClInclude Include="Lexer\DFA.h" />
     <ClInclude Include="Lexer\Lexer.h" />
-    <ClInclude Include="Lexer\ReservedWords.h" />
     <ClInclude Include="Parser\Grammar.h" />
     <ClInclude Include="Parser\Parser.h" />
     <ClInclude Include="Parser\Production.h" />

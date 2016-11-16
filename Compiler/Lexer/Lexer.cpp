@@ -1,19 +1,16 @@
 #include "Lexer.h"
 #include <iostream>
 #include "../SymbolTable.h"
+#include "../Trie.h"
 
 inline bool is_blank_char(char c) {
 	return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\0');
 }
 
-ReservedWords* Lexer::reserved_words = nullptr;
 DFA* Lexer::dfa = nullptr;
 
 Lexer::Lexer(char _end_char) :
 	end_char(_end_char) {
-	if (reserved_words == nullptr) {
-		reserved_words = new ReservedWords;
-	}
 	if (dfa == nullptr) {
 		dfa = new DFA;
 	}
@@ -65,7 +62,7 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 		if (Lexer::dfa->get_output() != UNKNOWN) {
 			cur_token.type = Lexer::dfa->get_output();		
 			if (cur_token.type == IDENTIFIER) { 
-				cur_token.type = Lexer::reserved_words->search(cur_symbol);
+				cur_token.type = reserved_words[cur_symbol];
 			}
 			switch (cur_token.type) {
 				case INCOMPLETE_NUMERIC_CONSTANT_ERROR:
@@ -100,7 +97,7 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 		}
 		lexer.rowCnt = cur_row;
 	}
-	lexer.token_stream.emplace_back(Token(END, END, -1, -1));
+	lexer.token_stream.emplace_back(END, END, -1, -1);
 
 	cout << "lexer outputs:\n";
 	for (const auto& token : lexer.token_stream) {

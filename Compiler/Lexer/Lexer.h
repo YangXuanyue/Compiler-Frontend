@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include "../Token.h"
-#include "ReservedWords.h"
+//#include "ReservedWords.h"
 #include "DFA.h"
 
 using std::istream;
@@ -22,7 +22,6 @@ private:
 	};
 	int end_char;
 	static DFA* dfa;
-	static ReservedWords* reserved_words;
 	vector<Token> token_stream;
 	int rowCnt, char_cnt;
 	array<int, TOKEN_TYPE_NUM> token_type_cnts;

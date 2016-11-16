@@ -13,7 +13,7 @@ using std::vector;
 
 struct Token {
 	friend ostream& operator <<(ostream& out, const Token& rhs) {
-		out << "<" << token_type_strs[rhs.type] << ", \"";
+		out << "<" << token_type_strings[rhs.type] << ", \"";
 		if (rhs.type < PREPROCESSOR) {
 			out << token_vals[rhs.symbol_pos];
 		} else {

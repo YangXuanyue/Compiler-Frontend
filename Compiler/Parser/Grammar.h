@@ -23,8 +23,8 @@ private:
 	Symbol start_symbol;
 	vector<Production> productions;
 	map<Symbol, set<int>> production_idxes;
-	map<Symbol, set<Symbol>> first, follow;
 	vector<set<Symbol>> first_of_production;
+	map<Symbol, set<Symbol>> first, follow;
 	map<Symbol, bool> has_constructed_first, has_constructed_follow;
 
 public:
@@ -36,9 +36,9 @@ public:
 	void remove_left_recursion();
 	void extract_common_left_factor();
 	void construct_first();
-	void construct_first(Symbol nonterminal);
+	void construct_first(const Symbol& nonterminal);
 	void construct_follow();
-	void construct_follow(Symbol nonterminal);
+	void construct_follow(const Symbol& nonterminal);
 
 	const Symbol& get_start_symbol() const {
 		//cout << start_symbol << endl;

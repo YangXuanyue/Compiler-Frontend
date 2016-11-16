@@ -5,6 +5,8 @@ using std::cout;
 using std::endl;
 
 Grammar::Grammar() :
+	//how to make this configurable?
+	//what format should be adopted in the config file?
 	nonterminals({"E", "T", "F"}),
 	terminals({
 		ADD, SUB, ASTERISK, DIV, L_PAREN, R_PAREN, NUMERIC_CONSTANT, END
@@ -242,7 +244,7 @@ void Grammar::construct_first() {
 	}
 }
 
-void Grammar::construct_first(Symbol nonterminal) {
+void Grammar::construct_first(const Symbol& nonterminal) {
 	for (int i : production_idxes[nonterminal]) {
 		const auto& production(productions[i]);
 		for (const auto& symbol : production.right) {
@@ -278,7 +280,7 @@ void Grammar::construct_follow() {
 	}
 }
 
-void Grammar::construct_follow(Symbol nonterminal) {
+void Grammar::construct_follow(const Symbol& nonterminal) {
 	for (const auto& tmp_nonterminal : nonterminals) {
 		for (int i : production_idxes[tmp_nonterminal]) {
 			const auto& production(productions[i]);

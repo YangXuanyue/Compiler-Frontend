@@ -3,6 +3,7 @@
 
 #include <string>
 #include <array>
+//#include "Trie.h"
 
 using std::string;
 using std::array;
@@ -109,7 +110,27 @@ enum TokenType {
 	ILLEGAL_CHAR_ERROR,
 };
 
-extern const array<string, TOKEN_TYPE_NUM> token_type_strs;
+extern const array<string, TOKEN_TYPE_NUM> token_type_strings;
 extern const array<string, TOKEN_TYPE_NUM> token_vals;
+
+template <typename V, V DefaultVal>
+class Trie;
+
+//quickly converts a token_val string to its corresponding TokenType
+class StringToTokenType {
+private:
+	enum {
+		MAX_TRIE_SIZE = 500
+	};
+	Trie<TokenType, IDENTIFIER>* trie;
+
+public:
+	StringToTokenType(TokenType first_type, TokenType last_type);
+	~StringToTokenType();
+	TokenType operator [](const string& word) const;
+};
+
+extern StringToTokenType string_to_token_type;
+extern StringToTokenType reserved_words;
 
 #endif
