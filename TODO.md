@@ -1,1 +1,1 @@
-* Make the grammar configurable, thus enabling further customization & addition.
+ - [x] Make the grammar configurable, thus enabling further customization & addition.
