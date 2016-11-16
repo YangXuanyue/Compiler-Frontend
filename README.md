@@ -17,6 +17,24 @@ const Lexer& operator >>(std::istream& in, Lexer& lexer);
 Lexer lexer;
 std::cin >> lexer;
 ```
+##Grammar
+The grammar for parsing C codes hasn't completed yet. Nevertheless, it can now be configured in  `../Compiler/Parser/Grammar.ini` in the form of:
+
+	nonterminals = {
+		E T F ...
+	}
+	
+	terminals = {
+		+ / if for ...
+	}
+	
+	start_symbol = {E}
+	
+	productions = {
+		{E -> E+T | E-T | ...}
+		...
+	}
+
 ##Parser
 `Input`
 ```Cpp
