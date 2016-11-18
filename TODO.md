@@ -1,1 +1,2 @@
  - [x] Make the grammar configurable, thus enabling further customization & addition.
+- [] Add a SLR(1) or LR(1) parser.
