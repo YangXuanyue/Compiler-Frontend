@@ -14,6 +14,9 @@ ostream& out(cout);
 
 Parser& operator >>(const Lexer& lexer, Parser& parser) {
 	const vector<Token>& token_stream(lexer.get_token_stream());
+	if (token_stream.front().type == END) {
+		return parser;
+	}
 	stack<Symbol> parsing_stack;
 	pair<deque<Symbol>, deque<Symbol>> left_sentencial_form{
 		{}, {parser.grammar.get_start_symbol()}
