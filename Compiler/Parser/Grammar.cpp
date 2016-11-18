@@ -21,6 +21,7 @@ using std::ifstream;
 void Grammar::load_from_ini() {
 	Lexer lexer;
 	ifstream in("../Compiler/Parser/Grammar.ini");
+	//ifstream in("Grammar.ini");
 	in >> lexer;
 	const vector<Token>& token_stream(lexer.get_token_stream());
 	int i(0);
@@ -96,7 +97,7 @@ void Grammar::load_from_ini() {
 void Grammar::print_productions() {
 	for (const auto& nonterminal : nonterminals) {
 		for (int i : production_idxes[nonterminal]) {
-			cout << productions[i];	
+			cout << productions[i];
 		}
 	}
 	cout << endl;
@@ -204,98 +205,106 @@ enum {
 };
 
 void Grammar::extract_common_left_factor() {
-	map<Symbol, int> symbol_to_idx;
-	int cur_idx(0);
-	for (const auto& nonterminal : nonterminals) {
-		symbol_to_idx[nonterminal] = cur_idx++;
-	}
-	for (const auto& terminal : terminals) {
-		symbol_to_idx[terminal] = cur_idx++;
-	}
-	Trie<int, -1> trie(MAX_TRIE_SIZE, cur_idx);
-	vector<Symbol> new_nonterminals;
-	//maps each symbol in each production to its idx
-	//for insertion in trie
-	vector<vector<int>> int_mapped_productions(productions.size());
-	for (const auto& nonterminal : nonterminals) {
-		trie.clear();
-		for (int i : production_idxes[nonterminal]) {
-			for (const auto& symbol : productions[i].right) {
-				int_mapped_productions[i].push_back(symbol_to_idx[symbol]);
-			}
-			trie.insert<vector<int>, int>(int_mapped_productions[i], i);
+	map<Symbol, int> new_nonterminal_suffixes;
+	while (true) {
+		bool has_common_left_factor(false);
+		map<Symbol, int> symbol_to_idx;
+		int cur_idx(0);
+		for (const auto& nonterminal : nonterminals) {
+			symbol_to_idx[nonterminal] = cur_idx++;
 		}
-		set<int> remaining_production_idxes(production_idxes[nonterminal]);
-		//clf = common left factor
-		//in pair<vector<int>, int>:
-		//vector<int> contanis indexes of productions shared clf
-		//int indicates the length of their clf
-		vector<pair<set<int>, int>> clf_shared_productions_sets;
-		for (int i : production_idxes[nonterminal]) {
-			if (remaining_production_idxes.find(i)
-				!= remaining_production_idxes.end()) {
-				int cur(trie.root);
-				int clf_len(0);
+		for (const auto& terminal : terminals) {
+			symbol_to_idx[terminal] = cur_idx++;
+		}
+		Trie<int, -1> trie(MAX_TRIE_SIZE, cur_idx);
+		vector<Symbol> new_nonterminals;
+		//maps each symbol in each production to its idx
+		//for insertion in trie
+		vector<vector<int>> int_mapped_productions(productions.size());
+		for (const auto& nonterminal : nonterminals) {
+			trie.clear();
+			for (int i : production_idxes[nonterminal]) {
 				for (const auto& symbol : productions[i].right) {
-					int idx(symbol_to_idx[symbol]);
-					int nxt(trie.nodes[cur].next[idx]);
-					if (trie.nodes[nxt].vis_vals.size() == 1) {
-						if (trie.nodes[cur].vis_vals.size() > 1) {
-							clf_shared_productions_sets.emplace_back(
-								trie.nodes[cur].vis_vals, clf_len
-							);
-							for (int i : clf_shared_productions_sets.back().first) {
-								remaining_production_idxes.erase(i);
-								trie.erase<vector<int>, int>(int_mapped_productions[i], i);
+					int_mapped_productions[i].push_back(symbol_to_idx[symbol]);
+				}
+				trie.insert<vector<int>, int>(int_mapped_productions[i], i);
+			}
+			set<int> remaining_production_idxes(production_idxes[nonterminal]);
+			//clf = common left factor
+			//in pair<vector<int>, int>:
+			//vector<int> contanis indexes of productions shared clf
+			//int indicates the length of their clf
+			vector<pair<set<int>, int>> clf_shared_productions_sets;
+			for (int i : production_idxes[nonterminal]) {
+				if (remaining_production_idxes.find(i)
+					!= remaining_production_idxes.end()) {
+					int cur(trie.root);
+					int clf_len(0);
+					for (const auto& symbol : productions[i].right) {
+						int idx(symbol_to_idx[symbol]);
+						int nxt(trie.nodes[cur].next[idx]);
+						if (trie.nodes[nxt].vis_vals.size() == 1) {
+							if (trie.nodes[cur].vis_vals.size() > 1) {
+								clf_shared_productions_sets.emplace_back(
+									trie.nodes[cur].vis_vals, clf_len
+								);
+								for (int i : clf_shared_productions_sets.back().first) {
+									remaining_production_idxes.erase(i);
+									trie.erase<vector<int>, int>(int_mapped_productions[i], i);
+								}
+								break;
 							}
-							break;
 						}
+						cur = nxt;
+						++clf_len;
 					}
-					cur = nxt;
-					++clf_len;
+				}
+			}
+			if (clf_shared_productions_sets.size()) {
+				has_common_left_factor = true;
+				production_idxes[nonterminal] = std::move(remaining_production_idxes);
+				//int new_nonterminal_suffix(1);
+				for (auto& clf_shared_productions : clf_shared_productions_sets) {
+					Symbol new_nonterminal(
+						boost::get<string>(nonterminal)
+						+ "_" + lexical_cast<string>(new_nonterminal_suffixes[nonterminal]++)
+					);
+					new_nonterminals.emplace_back(new_nonterminal);
+					Production new_production(nonterminal);
+					int clf_len(clf_shared_productions.second);
+					auto clf_shared_production_idxes(
+						std::move(clf_shared_productions.first)
+					);
+					bool has_init_new_production(false);
+					for (int i : clf_shared_production_idxes) {
+						productions[i].left = new_nonterminal;
+						for (int j(0); j < clf_len; ++j) {
+							if (!has_init_new_production) {
+								new_production.right.emplace_back(
+									std::move(productions[i].right.front())
+								);
+							}
+							productions[i].right.pop_front();
+						}
+						has_init_new_production = true;
+						if (productions[i].right.empty()) {
+							productions[i].right.emplace_back(EPSILON);
+						}
+						production_idxes[new_nonterminal].insert(i);
+					}
+					production_idxes[nonterminal].insert(productions.size());
+					new_production.right.emplace_back(std::move(new_nonterminal));
+					productions.emplace_back(std::move(new_production));
 				}
 			}
 		}
-		if (clf_shared_productions_sets.size()) {
-			cout << "yes\n";
-			production_idxes[nonterminal] = std::move(remaining_production_idxes);
-			int new_nonterminal_suffix(1);
-			for (auto& clf_shared_productions : clf_shared_productions_sets) {
-				Symbol new_nonterminal(
-					boost::get<string>(nonterminal)
-					+ "_" + lexical_cast<string>(new_nonterminal_suffix++)
-				);
-				new_nonterminals.emplace_back(new_nonterminal);
-				Production new_production(nonterminal);
-				int clf_len(clf_shared_productions.second);
-				auto clf_shared_production_idxes(
-					std::move(clf_shared_productions.first)
-				);
-				bool has_init_new_production(false);
-				for (int i : clf_shared_production_idxes) {
-					productions[i].left = new_nonterminal;
-					for (int j(0); j < clf_len; ++j) {
-						if (!has_init_new_production) {
-							new_production.right.emplace_back(
-								std::move(productions[i].right.front())
-							);
-						}
-						productions[i].right.pop_front();
-					}
-					has_init_new_production = true;
-					if (productions[i].right.empty()) {
-						productions[i].right.emplace_back(EPSILON);
-					}
-					production_idxes[new_nonterminal].insert(i);
-				}
-				production_idxes[nonterminal].insert(productions.size());
-				new_production.right.emplace_back(std::move(new_nonterminal));
-				productions.emplace_back(std::move(new_production));
+		if (has_common_left_factor) {
+			for (auto& new_nonterminal : new_nonterminals) {
+				nonterminals.emplace_back(std::move(new_nonterminal));
 			}
-		}	
-	}
-	for (auto& new_nonterminal : new_nonterminals) {
-		nonterminals.emplace_back(std::move(new_nonterminal));
+		} else {
+			break;
+		}
 	}
 }
 
