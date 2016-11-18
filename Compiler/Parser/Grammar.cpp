@@ -5,20 +5,12 @@ using std::cout;
 using std::endl;
 
 Grammar::Grammar() {
-	load_grammar();
+	load_from_ini();
 	int cur_idx = 0;
 	for (const auto& production : productions) {
 		production_idxes[production.left].insert(cur_idx++);
 	}
-	print_productions();
-	remove_left_recursion();
-	print_productions();
-	extract_common_left_factor();
-	print_productions();
-	construct_first();
-	print_first();
-	construct_follow();
-	print_follow();
+	//print_productions();
 }
 
 #include "../Lexer/Lexer.h"
@@ -26,7 +18,7 @@ Grammar::Grammar() {
 
 using std::ifstream;
 
-void Grammar::load_grammar() {
+void Grammar::load_from_ini() {
 	Lexer lexer;
 	ifstream in("../Compiler/Parser/Grammar.ini");
 	in >> lexer;
@@ -41,6 +33,8 @@ void Grammar::load_grammar() {
 		);
 	}
 	//load terminals
+	terminals.emplace_back(EPSILON);
+	terminals.emplace_back(END);
 	for (; token_stream[i].type != L_BRACE; ++i);
 	for (++i; token_stream[i].type != R_BRACE; ++i) {
 		TokenType type(token_stream[i].type);
@@ -165,15 +159,6 @@ void Grammar::remove_left_recursion() {
 				}
 			}
 		}
-		/*cout << nonterminal << endl;
-		for (int i : production_idxes[nonterminal]) {
-			cout << i << " ";
-		}
-		cout << endl;
-		for (int i : new_production_idxes) {
-			cout << i << " ";
-		}
-		cout << endl;*/
 		production_idxes[nonterminal] = new_production_idxes;
 		vector<int> left_recursive_production_idxes;
 		for (int i : production_idxes[nonterminal]) {
@@ -272,6 +257,7 @@ void Grammar::extract_common_left_factor() {
 			}
 		}
 		if (clf_shared_productions_sets.size()) {
+			cout << "yes\n";
 			production_idxes[nonterminal] = std::move(remaining_production_idxes);
 			int new_nonterminal_suffix(1);
 			for (auto& clf_shared_productions : clf_shared_productions_sets) {
@@ -290,7 +276,7 @@ void Grammar::extract_common_left_factor() {
 					productions[i].left = new_nonterminal;
 					for (int j(0); j < clf_len; ++j) {
 						if (!has_init_new_production) {
-							new_production.right.emplace_front(
+							new_production.right.emplace_back(
 								std::move(productions[i].right.front())
 							);
 						}
@@ -325,9 +311,11 @@ void Grammar::construct_first() {
 void Grammar::construct_first(const Symbol& nonterminal) {
 	for (int i : production_idxes[nonterminal]) {
 		const auto& production(productions[i]);
+		bool all_has_epsilon(true);
 		for (const auto& symbol : production.right) {
 			if (symbol.which() == TERMINAL) {
 				first_of_production[i].insert(symbol);
+				all_has_epsilon = false;
 				break;
 			}
 			if (!has_constructed_first[symbol]) {
@@ -338,8 +326,14 @@ void Grammar::construct_first(const Symbol& nonterminal) {
 				first[symbol].end()
 			);
 			if (first[symbol].find(EPSILON) == first[symbol].end()) {
+				all_has_epsilon = false;
 				break;
+			} else {
+				first_of_production[i].erase(EPSILON);
 			}
+		}
+		if (all_has_epsilon) {
+			first_of_production[i].insert(EPSILON);
 		}
 		first[nonterminal].insert(
 			first_of_production[i].begin(),
@@ -364,10 +358,7 @@ void Grammar::construct_follow() {
 					follow[another_nonterminal].begin(),
 					follow[another_nonterminal].end()
 				);
-				follow[another_nonterminal].insert(
-					follow[nonterminal].begin(),
-					follow[nonterminal].end()
-				);
+				follow[another_nonterminal] = follow[nonterminal];
 			}
 		}
 	}

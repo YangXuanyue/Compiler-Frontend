@@ -1,11 +1,16 @@
 #include "Parser.h"
 #include <stack>
 #include <iostream>
+#include <fstream>
 #include <utility>
 
 using std::stack;
+using std::ofstream;
 using std::cout;
 using std::pair;
+
+//ofstream out("../Compiler/Parser/parser_output.txt");
+ostream& out(cout);
 
 Parser& operator >>(const Lexer& lexer, Parser& parser) {
 	const vector<Token>& token_stream(lexer.get_token_stream());
@@ -16,34 +21,34 @@ Parser& operator >>(const Lexer& lexer, Parser& parser) {
 	parsing_stack.push(END);
 	parsing_stack.push(parser.grammar.get_start_symbol());
 	const vector<Production>& productions(parser.grammar.get_productions());
-	cout << "parser outputs:\n";
-	for (int i(0); i < token_stream.size(); ) {
-		cout << "current left sentecial form:\n\t\t\t\t";
+	//cout << "parser outputs:\n";
+	for (int i(0); i < token_stream.size() && parsing_stack.size(); ) {
+		out << "current left sentencial form:\n\t\t\t\t";
 		for (const auto& symbol : left_sentencial_form.first) {
-			print_symbol(cout, symbol);
-			cout << " ";
+			print_symbol(out, symbol);
+			out << " ";
 		}
 		for (const auto& symbol : left_sentencial_form.second) {
-			print_symbol(cout, symbol);
-			cout << " ";
+			print_symbol(out, symbol);
+			out << " ";
 		}
-		cout << endl;
-		cout << "current token stream:\n\t\t\t\t";
+		out << endl;
+		out << "current token stream:\n\t\t\t\t";
 		for (int j(i); j < token_stream.size(); ++j) {
-			print_symbol(cout, token_stream[j].type);
-			cout << " ";
+			print_symbol(out, token_stream[j].type);
+			out << " ";
 		}
-		cout << endl;
-		cout << "output:\n\t\t\t\t";
+		out << endl;
+		out << "output:\n\t\t\t\t";
 		const auto& token(token_stream[i]);
 		if (parsing_stack.top().which() == TERMINAL) {
 			if (boost::get<TokenType>(parsing_stack.top()) == token.type) {
 				++i;
 			} else {
 				//handle error
-				cout << "error: ";
-				print_symbol(cout, token.type);
-				cout << " expected\n";
+				out << "error: ";
+				print_symbol(out, parsing_stack.top());
+				out << " expected\n";
 			}
 			parsing_stack.pop();
 			if (left_sentencial_form.second.size()) {
@@ -59,7 +64,7 @@ Parser& operator >>(const Lexer& lexer, Parser& parser) {
 				left_sentencial_form.second.pop_front();
 				if (res->second != Parser::SYNCH) {
 					const Production& production(productions[res->second]);
-					cout << production;
+					out << production;
 					if (!(production.right.front().which() == TERMINAL
 						  && boost::get<TokenType>(production.right.front()) == EPSILON)) {
 						for (int j(production.right.size() - 1); ~j; --j) {
@@ -73,21 +78,29 @@ Parser& operator >>(const Lexer& lexer, Parser& parser) {
 					}
 				} else {
 					//handle error
-					cout << "error\n";
+					out << "error\n";
 				}
 			} else {
 				//handle error
 				++i;
-				cout << "error\n";
+				out << "error\n";
 			}
 		}
-		cout << endl;
+		out << endl;
 	}
-	cout << endl;
+	out << endl;
 	return parser;
 }
 
 void Parser::construct_parsing_table() {
+	grammar.remove_left_recursion();
+	//grammar.print_productions();
+	grammar.extract_common_left_factor();
+	//grammar.print_productions();
+	grammar.construct_first();
+	//grammar.print_first();
+	grammar.construct_follow();
+	//grammar.print_follow();
 	for (const auto& nonterminal : grammar.nonterminals) {
 		for (int i : grammar.production_idxes[nonterminal]) {
 			bool has_epsilon = false;

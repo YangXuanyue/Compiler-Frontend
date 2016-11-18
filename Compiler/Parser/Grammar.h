@@ -31,7 +31,7 @@ private:
 public:
 	Grammar();
 	~Grammar();
-	void load_grammar();
+	void load_from_ini();
 	void print_productions();
 	void print_first();
 	void print_follow();
@@ -43,7 +43,6 @@ public:
 	void construct_follow(const Symbol& nonterminal);
 
 	const Symbol& get_start_symbol() const {
-		//cout << start_symbol << endl;
 		return start_symbol;
 	}
 

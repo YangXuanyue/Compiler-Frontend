@@ -1,0 +1,129 @@
+current left sentencial form:
+				E 
+current token stream:
+				* num * + num end 
+output:
+				error
+
+current left sentencial form:
+				E 
+current token stream:
+				num * + num end 
+output:
+				E -> T E' 
+
+current left sentencial form:
+				T E' 
+current token stream:
+				num * + num end 
+output:
+				T -> F T' 
+
+current left sentencial form:
+				F T' E' 
+current token stream:
+				num * + num end 
+output:
+				F -> num 
+
+current left sentencial form:
+				num T' E' 
+current token stream:
+				num * + num end 
+output:
+				
+current left sentencial form:
+				num T' E' 
+current token stream:
+				* + num end 
+output:
+				T' -> * F T' 
+
+current left sentencial form:
+				num * F T' E' 
+current token stream:
+				* + num end 
+output:
+				
+current left sentencial form:
+				num * F T' E' 
+current token stream:
+				+ num end 
+output:
+				error
+
+current left sentencial form:
+				num * T' E' 
+current token stream:
+				+ num end 
+output:
+				T' -> epsilon 
+
+current left sentencial form:
+				num * E' 
+current token stream:
+				+ num end 
+output:
+				E' -> + T E' 
+
+current left sentencial form:
+				num * + T E' 
+current token stream:
+				+ num end 
+output:
+				
+current left sentencial form:
+				num * + T E' 
+current token stream:
+				num end 
+output:
+				T -> F T' 
+
+current left sentencial form:
+				num * + F T' E' 
+current token stream:
+				num end 
+output:
+				F -> num 
+
+current left sentencial form:
+				num * + num T' E' 
+current token stream:
+				num end 
+output:
+				
+current left sentencial form:
+				num * + num T' E' 
+current token stream:
+				end 
+output:
+				T' -> epsilon 
+
+current left sentencial form:
+				num * + num E' 
+current token stream:
+				end 
+output:
+				E' -> epsilon 
+
+current left sentencial form:
+				num * + num 
+current token stream:
+				end 
+output:
+				
+
+current left sentencial form:
+				E 
+current token stream:
+				end 
+output:
+				error
+
+current left sentencial form:
+				
+current token stream:
+				end 
+output:
+				
+

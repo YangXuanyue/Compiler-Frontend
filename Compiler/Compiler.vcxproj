@@ -45,6 +45,9 @@
   <ItemGroup>
     <None Include="Parser\Grammar.ini" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29505A08-9621-41AD-9907-AB35D59B6274}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
