@@ -1,5 +1,6 @@
 # Compiler
-A far-from-complete C compiler, including a lexer and an expression parser so far, project for course `Compiler Principle and Technology`.
+A far-from-complete C compiler, including a lexer and an expression parser so far, project for course `Compiler Principle and Technology`.  View [词法分析实验报告](https://github.com/YangXuanyue/Compiler/blob/master/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf) and [语法分析实验报告] (https://github.com/YangXuanyue/Compiler/blob/master/%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf) for details.
+
 ##Lexer
 `Constructor`
 ```Cpp
