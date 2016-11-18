@@ -12,14 +12,14 @@ using std::pair;
 //ofstream out("../Compiler/Parser/parser_output.txt");
 ostream& out(cout);
 
-Parser& operator >>(const Lexer& lexer, Parser& parser) {
+Parser& operator >> (const Lexer& lexer, Parser& parser) {
 	const vector<Token>& token_stream(lexer.get_token_stream());
 	if (token_stream.front().type == END) {
 		return parser;
 	}
 	stack<Symbol> parsing_stack;
 	pair<deque<Symbol>, deque<Symbol>> left_sentencial_form{
-		{}, {parser.grammar.get_start_symbol()}
+		{},{parser.grammar.get_start_symbol()}
 	};
 	parsing_stack.push(END);
 	parsing_stack.push(parser.grammar.get_start_symbol());
@@ -63,6 +63,7 @@ Parser& operator >>(const Lexer& lexer, Parser& parser) {
 		} else {
 			auto res(parser.parsing_table[parsing_stack.top()].find(token.type));
 			if (res != parser.parsing_table[parsing_stack.top()].end()) {
+				Symbol nonterminal(std::move(parsing_stack.top()));
 				parsing_stack.pop();
 				left_sentencial_form.second.pop_front();
 				if (res->second != Parser::SYNCH) {
@@ -81,12 +82,14 @@ Parser& operator >>(const Lexer& lexer, Parser& parser) {
 					}
 				} else {
 					//handle error
-					out << "error\n";
+					out << "error: " << nonterminal << " expected\n";
 				}
 			} else {
 				//handle error
+				out << "error: ";
+				print_symbol(out, Symbol(token_stream[i].type));
+				out << " unexpected\n";
 				++i;
-				out << "error\n";
 			}
 		}
 		out << endl;
