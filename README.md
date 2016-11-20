@@ -1,5 +1,5 @@
 # Compiler
-A far-from-complete C compiler, including a lexer and an expression parser so far, project for course `Compiler Principle and Technology`.  View [词法分析实验报告](https://github.com/YangXuanyue/Compiler/blob/master/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf) and [语法分析实验报告] (https://github.com/YangXuanyue/Compiler/blob/master/%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf) for details.
+A far-from-complete C compiler, including a lexer and an expression parser so far, project for course `Compiler Principle and Technology`. For details, please refer to the report of lexer design and implement experiment [词法分析实验报告](https://github.com/YangXuanyue/Compiler/blob/master/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf) and the report of parser design and implement experiment [语法分析实验报告] (https://github.com/YangXuanyue/Compiler/blob/master/%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A.pdf).
 
 ##Lexer
 `Constructor`
@@ -18,8 +18,8 @@ const Lexer& operator >>(std::istream& in, Lexer& lexer);
 Lexer lexer;
 std::cin >> lexer;
 ```
-##Grammar
-The grammar for parsing C codes hasn't completed yet. Nevertheless, it can now be configured in  `../Compiler/Parser/Grammar.ini` in the form of:
+## Grammar Configuring
+The parser for parsing C codes hasn't completed yet. Nevertheless, it can now be configured in  `../Compiler/Parser/Grammar.ini` in the form of:
 
 	nonterminals = {
 		E T F ...
@@ -36,7 +36,7 @@ The grammar for parsing C codes hasn't completed yet. Nevertheless, it can now b
 		...
 	}
 
-##Parser
+## Parser
 `Input`
 ```Cpp
 Parser& operator >>(const Lexer& lexer, Parser& parser);
