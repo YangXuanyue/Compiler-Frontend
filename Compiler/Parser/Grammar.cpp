@@ -309,7 +309,7 @@ void Grammar::extract_common_left_factor() {
 }
 
 void Grammar::construct_first() {
-	first_of_production.resize(productions.size());
+	first_of_production.resize(productions.size()); 
 	for (const auto& nonterminal : nonterminals) {
 		if (!has_constructed_first[nonterminal]) {
 			construct_first(nonterminal);

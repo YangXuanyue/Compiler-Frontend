@@ -63,7 +63,4 @@
       <Filter>Parser</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="input.txt" />
-  </ItemGroup>
 </Project>
