@@ -19,11 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Lexer\DFA.cpp" />
+    <ClCompile Include="Lexer\Dfa.cpp" />
     <ClCompile Include="Lexer\Lexer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Parser\Grammar.cpp" />
-    <ClCompile Include="Parser\Parser.cpp" />
+    <ClCompile Include="Parser\LL\LL_Parser.cpp" />
+    <ClCompile Include="Parser\LR\ItemSet.cpp" />
+    <ClCompile Include="Parser\LR\LR_Dfa.cpp" />
+    <ClCompile Include="Parser\LR\Item.cpp" />
+    <ClCompile Include="Parser\LR\LR_Parser.cpp" />
     <ClCompile Include="Parser\Symbol.cpp" />
     <ClCompile Include="sheet.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
@@ -31,10 +35,15 @@
     <ClCompile Include="TokenType.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Lexer\DFA.h" />
+    <ClInclude Include="Lexer\Dfa.h" />
     <ClInclude Include="Lexer\Lexer.h" />
     <ClInclude Include="Parser\Grammar.h" />
-    <ClInclude Include="Parser\Parser.h" />
+    <ClInclude Include="Parser\LL\LL_Parser.h" />
+    <ClInclude Include="Parser\LR\Action.h" />
+    <ClInclude Include="Parser\LR\ItemSet.h" />
+    <ClInclude Include="Parser\LR\LR_Dfa.h" />
+    <ClInclude Include="Parser\LR\Item.h" />
+    <ClInclude Include="Parser\LR\LR_Parser.h" />
     <ClInclude Include="Parser\Production.h" />
     <ClInclude Include="Parser\Symbol.h" />
     <ClInclude Include="SymbolTable.h" />

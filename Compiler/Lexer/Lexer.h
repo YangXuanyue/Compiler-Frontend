@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "../Token.h"
-#include "DFA.h"
+#include "Dfa.h"
 
 using std::istream;
 using std::ostream;
@@ -19,7 +19,6 @@ private:
 		NOT_FOUND = -1
 	};
 	int end_char;
-	static DFA* dfa;
 	vector<Token> token_stream;
 	int rowCnt, char_cnt;
 	array<int, TOKEN_TYPE_NUM> token_type_cnts;

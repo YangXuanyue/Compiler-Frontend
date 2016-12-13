@@ -7,19 +7,16 @@ inline bool is_blank_char(char c) {
 	return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\0');
 }
 
-DFA* Lexer::dfa = nullptr;
+//DFA* Lexer::dfa = nullptr;
 
 Lexer::Lexer(char _end_char) :
 	end_char(_end_char) {
-	if (dfa == nullptr) {
-		dfa = new DFA;
-	}
 }
 
 const Lexer& operator >>(istream& in, Lexer& lexer) {
 	lexer.token_stream.clear();
 	symbol_table.clear();
-	lexer.dfa->init();
+	dfa.init();
 	lexer.char_cnt = 0;
 	fill(lexer.token_type_cnts.begin(), lexer.token_type_cnts.end(), 0);
 	lexer.error_token_ids.clear();
@@ -43,11 +40,11 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 			cur_token.col = cur_col;
 			expects_new_token = false; 
 		}
-		Lexer::dfa->trans(c); 
-		if (Lexer::dfa->needs_retract()) { 
+		dfa.trans(c); 
+		if (dfa.needs_retract()) { 
 			in.putback(c); 
 		} else {
-			if (Lexer::dfa->get_state() != DFA::START) {
+			if (dfa.get_state() != Dfa::START) {
 				cur_symbol += c; 
 			} else if (!is_blank_char(c)) {
 				cur_symbol += c; 
@@ -59,8 +56,8 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 				cur_col = 1;
 			}
 		}
-		if (Lexer::dfa->get_output() != UNKNOWN) {
-			cur_token.type = Lexer::dfa->get_output();		
+		if (dfa.get_output() != UNKNOWN) {
+			cur_token.type = dfa.get_output();		
 			if (cur_token.type == IDENTIFIER) { 
 				cur_token.type = reserved_words[cur_symbol];
 			}

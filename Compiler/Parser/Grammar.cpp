@@ -25,6 +25,7 @@ void Grammar::load_from_ini() {
 	in >> lexer;
 	const vector<Token>& token_stream(lexer.get_token_stream());
 	int i(0);
+	//load nonterminals
 	for (; token_stream[i].type != L_BRACE; ++i);
 	for (++i; token_stream[i].type != R_BRACE; ++i) {
 		nonterminals.push_back(
@@ -131,7 +132,13 @@ void Grammar::print_follow() {
 	cout << endl;
 }
 
-Grammar::~Grammar() {
+void Grammar::augment() {
+	Symbol new_start_symbol = "S" + boost::get<string>(start_symbol);
+	production_idxes[new_start_symbol].insert(productions.size()); 
+	productions.emplace_back(new_start_symbol);
+	productions.back().right.emplace_back(start_symbol);
+	start_symbol = new_start_symbol;
+	nonterminals.emplace_front(std::move(new_start_symbol));
 }
 
 void Grammar::remove_left_recursion() {

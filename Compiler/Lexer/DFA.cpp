@@ -1,9 +1,9 @@
-#include "DFA.h"
+#include "Dfa.h"
 #include <algorithm>
 
 using std::fill;
 
-DFA::DFA() {
+Dfa::Dfa() {
 	cur = START;
 	states[cur].next['#'] = 1;
 	states[cur].next['/'] = 2;

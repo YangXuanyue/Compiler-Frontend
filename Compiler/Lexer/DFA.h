@@ -7,7 +7,7 @@
 
 using std::bitset;
 
-class DFA {
+class Dfa {
 	enum {
 		STATE_NUM = 50,
 		SIGMA_SIZE = 128,
@@ -27,12 +27,17 @@ class DFA {
 	TokenType output;
 	bool retract_flg;
 
+	Dfa();
+
 public:
+	static Dfa& get_instance() {
+		static Dfa instance;
+		return instance;
+	}
+
 	enum{
 		START = 0
 	};
-	
-	DFA();
 	
 	void init() {
 		cur = START;
@@ -58,5 +63,7 @@ public:
 		return retract_flg;
 	}
 };
+
+#define dfa Dfa::get_instance()
 
 #endif //LEXER_DFA_H
