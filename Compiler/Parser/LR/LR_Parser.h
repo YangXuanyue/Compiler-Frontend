@@ -4,8 +4,10 @@
 #include "../../Lexer/Lexer.h"
 #include "../Grammar.h"
 #include "Action.h"
+#include "LR_Dfa.h"
 #include <vector>
 #include <map>
+#include <cstdlib>
 
 using std::vector;
 using std::map;
@@ -22,7 +24,12 @@ namespace LR {
 
 	public:
 		Parser() {
-			construct_parsing_table();
+			try {
+				construct_parsing_table();
+			} catch (const string& exception) {
+				cerr << exception;
+				system("pause");
+			}
 		}
 	};
 }

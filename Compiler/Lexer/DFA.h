@@ -45,7 +45,7 @@ public:
 		retract_flg = false;
 	}
 	
-	void trans(char c) {
+	void transit(char c) {
 		output = states[cur].output[c];
 		retract_flg = states[cur].retract_flg[c];
 		cur = states[cur].next[c];

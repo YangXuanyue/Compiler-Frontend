@@ -3,7 +3,8 @@
 namespace LR {
 	enum ActionType {
 		SHIFT,
-		REDUCE
+		REDUCE,
+		ACC
 	};
 
 	struct Action {

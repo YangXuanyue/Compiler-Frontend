@@ -6,38 +6,72 @@
 using std::set;
 
 namespace LR {
+	class Dfa;
+	class Parser;
+
 	class ItemSet {
-		friend ostream& operator <<(ostream& out, const ItemSet& itemset) {
-			for (const auto& item : items) {
+		friend ostream& operator <<(ostream& out, const ItemSet& item_set) {
+			for (const auto& item : item_set.items) {
 				out << item;
 			}
+			return out;
 		}
+		
+		friend class Dfa;
+		friend class Parser;
 
 		set<Item> items;
+		map<Symbol, set<Item>> transitable_items;
+		set<Item> reduced_items;
 
 	public:
 		ItemSet(const set<Item>& items = {}) : items(items) {
+			extend();
+			for (const auto& item : this->items) {
+				const auto& production(
+					grammar.productions[
+						item.production_idx
+					]
+				);
+				if (item.dot_pos < production.right.size()) {
+					transitable_items[
+						production.right[
+							item.dot_pos
+						]
+					].insert(item);
+				} else {
+					reduced_items.insert(item);
+				}
+			}
+			/*cout << "===\n" << *this << "===\n";
+			
+			for (const auto& nonterminal : grammar.nonterminals) {
+				print_symbol(cout, nonterminal) << ":\n";
+				if (transitable_items.find(nonterminal) != transitable_items.end()) {
+					for (const auto& item : transitable_items[nonterminal]) {
+						cout << item;
+					}
+				}
+			}
+			
+			*/
 		}
 		
-		ItemSet(const ItemSet& src) : ItemSet(src.items) {
+		ItemSet(const ItemSet& src) : 
+			items(src.items), 
+			transitable_items(src.transitable_items),
+			reduced_items(src.reduced_items) {
 		}
 
-		ItemSet(ItemSet&& src) : items(std::move(src.items)) {
+		ItemSet(ItemSet&& src) : 
+			items(std::move(src.items)),
+			transitable_items(std::move(src.transitable_items)),
+			reduced_items(std::move(src.reduced_items)) {
 		}
 
 		bool has_item(const Item& item) {
 			return items.find(item) != items.end();
 		}
-		
-		/*
-		void insert(const Item& item) {
-			items.insert(item);
-		}
-
-		void insert(Item&& item) {
-			items.insert(std::move(item));
-		}
-		*/
 
 		void extend() {
 			auto new_items(items);
@@ -76,8 +110,8 @@ namespace LR {
 					if (*it != *r_it) {
 						return false;
 					}
-					return true;
 				}
+				return true;
 			}
 			return false;
 		}

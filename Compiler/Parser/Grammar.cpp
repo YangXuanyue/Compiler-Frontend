@@ -141,6 +141,9 @@ void Grammar::augment() {
 	nonterminals.emplace_front(std::move(new_start_symbol));
 }
 
+void Grammar::remove_epsilon_production() {
+}
+
 void Grammar::remove_left_recursion() {
 	set<Symbol> vis_nonterminals;
 	vector<Symbol> new_nonterminals;
@@ -213,6 +216,10 @@ enum {
 
 void Grammar::extract_common_left_factor() {
 	map<Symbol, int> new_nonterminal_suffixes;
+	//Ineffecient loop, needs optimization.
+	//Actually in each round, only those newly-added productions 
+	//need checking if there exist common left factors among them.
+	//Thus only those productions needs adding to the trie.
 	while (true) {
 		bool has_common_left_factor(false);
 		map<Symbol, int> symbol_to_idx;
@@ -225,7 +232,7 @@ void Grammar::extract_common_left_factor() {
 		}
 		Trie<int, -1> trie(MAX_TRIE_SIZE, cur_idx);
 		vector<Symbol> new_nonterminals;
-		//maps each symbol in each production to its idx
+		//Maps each symbol in each production to its idx
 		//for insertion in trie
 		vector<vector<int>> int_mapped_productions(productions.size());
 		for (const auto& nonterminal : nonterminals) {
@@ -315,8 +322,108 @@ void Grammar::extract_common_left_factor() {
 	}
 }
 
+#ifndef BRUTE_FORCE
+
 void Grammar::construct_first() {
-	first_of_production.resize(productions.size()); 
+	first_of_production.resize(productions.size());
+	bool has_updation(true);
+	while (has_updation) {
+		has_updation = false;
+		for (const auto& nonterminal : nonterminals) {
+			//print_symbol(cout, nonterminal) << endl;
+			int orig_size(first[nonterminal].size());
+			for (int i : production_idxes[nonterminal]) {
+				const auto& production(productions[i]);
+				bool all_has_epsilon(true);
+				for (const auto& symbol : production.right) {
+					if (symbol.which() == TERMINAL) {
+						first_of_production[i].insert(symbol);
+						all_has_epsilon = false;
+						break;
+					}
+					first_of_production[i].insert(
+						first[symbol].begin(),
+						first[symbol].end()
+					);
+					if (first[symbol].find(EPSILON) == first[symbol].end()) {
+						all_has_epsilon = false;
+						break;
+					} else {
+						//cout << "erase\n";
+						first_of_production[i].erase(EPSILON);
+					}
+				}
+				if (all_has_epsilon) {
+					first_of_production[i].insert(EPSILON);
+				}
+				//cout << "yes\n";
+				//cout << first_of_production[i].size() << endl;
+				first[nonterminal].insert(
+					first_of_production[i].begin(),
+					first_of_production[i].end()
+				);
+				//cout << "yes\n";
+				has_updation |= (first[nonterminal].size() > orig_size);
+			}
+		}
+	}
+}
+
+void Grammar::construct_first(const Symbol& nonterminal) {
+}
+
+void Grammar::construct_follow() {
+	follow[start_symbol].insert(END);
+	bool has_updation = true;
+	while (has_updation) {
+		has_updation = false;
+		for (const auto& nonterminal : nonterminals) {
+			//print_symbol(cout, nonterminal) << endl;
+			int orig_size(follow[nonterminal].size());
+			for (const auto& tmp_nonterminal : nonterminals) {
+				for (int i : production_idxes[tmp_nonterminal]) {
+					const auto& production(productions[i]);
+					for (int j(0), k; j < production.right.size(); ++j) {
+						if (production.right[j] == nonterminal) {
+							for (k = j + 1; k < production.right.size(); ++k) {
+								const auto& symbol(production.right[k]);
+								if (symbol.which() == TERMINAL) {
+									follow[nonterminal].insert(symbol);
+									break;
+								}
+								follow[nonterminal].insert(
+									first[symbol].begin(),
+									first[symbol].end()
+								);
+								if (first[symbol].find(EPSILON) == first[symbol].end()) {
+									break;
+								} else {
+									follow[nonterminal].erase(EPSILON);
+								}
+							}
+							if (k == production.right.size()) {
+								const auto& another_nonterminal(production.left);
+								follow[nonterminal].insert(
+									follow[another_nonterminal].begin(),
+									follow[another_nonterminal].end()
+								);
+							}
+						}
+					}
+				}
+			}
+			has_updation |= (follow[nonterminal].size() > orig_size);
+		}
+	}
+}
+
+void Grammar::construct_follow(const Symbol& nonterminal) {
+}
+
+#else
+
+void Grammar::construct_first() {
+	first_of_production.resize(productions.size());
 	for (const auto& nonterminal : nonterminals) {
 		if (!has_constructed_first[nonterminal]) {
 			construct_first(nonterminal);
@@ -334,18 +441,26 @@ void Grammar::construct_first(const Symbol& nonterminal) {
 				all_has_epsilon = false;
 				break;
 			}
-			if (!has_constructed_first[symbol]) {
-				construct_first(symbol);
-			}
-			first_of_production[i].insert(
-				first[symbol].begin(),
-				first[symbol].end()
-			);
-			if (first[symbol].find(EPSILON) == first[symbol].end()) {
+			//This condition is forever true if left recursion has been removed.
+			//However, LR parsing allows left recursion.
+			//Thus a check to prevent dead loop id needed here.
+			if (symbol != nonterminal) {
+				if (!has_constructed_first[symbol]) {
+					construct_first(symbol);
+				}
+				first_of_production[i].insert(
+					first[symbol].begin(),
+					first[symbol].end()
+				);
+				if (first[symbol].find(EPSILON) == first[symbol].end()) {
+					all_has_epsilon = false;
+					break;
+				} else {
+					first_of_production[i].erase(EPSILON);
+				}
+			} else {
 				all_has_epsilon = false;
 				break;
-			} else {
-				first_of_production[i].erase(EPSILON);
 			}
 		}
 		if (all_has_epsilon) {
@@ -375,6 +490,9 @@ void Grammar::construct_follow() {
 					follow[another_nonterminal].end()
 				);
 				follow[another_nonterminal] = follow[nonterminal];
+				includes_follow_of[nonterminal][another_nonterminal]
+					= includes_follow_of[another_nonterminal][nonterminal]
+					= false;
 			}
 		}
 	}
@@ -422,4 +540,7 @@ void Grammar::construct_follow(const Symbol& nonterminal) {
 	}
 	has_constructed_follow[nonterminal] = true;
 }
+
+#endif // !BRUTE_FORCE
+
 

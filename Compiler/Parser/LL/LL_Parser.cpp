@@ -14,17 +14,17 @@ namespace LL {
 	ostream& out(cout);
 
 	Parser& operator >> (const Lexer& lexer, Parser& parser) {
-		const vector<Token>& token_stream(lexer.get_token_stream());
+		const auto& token_stream(lexer.get_token_stream());
 		if (token_stream.front().type == END) {
 			return parser;
 		}
 		stack<Symbol> parsing_stack;
+		parsing_stack.push(END);
+		parsing_stack.push(grammar.get_start_symbol());
 		pair<deque<Symbol>, deque<Symbol>> left_sentencial_form{
 			{},{grammar.get_start_symbol()}
 		};
-		parsing_stack.push(END);
-		parsing_stack.push(grammar.get_start_symbol());
-		const vector<Production>& productions(grammar.get_productions());
+		const auto& productions(grammar.get_productions());
 		//cout << "parser outputs:\n";
 		for (int i(0); i < token_stream.size() && parsing_stack.size(); ) {
 			out << "current left sentencial form:\n\t\t\t\t";
@@ -44,9 +44,9 @@ namespace LL {
 			}
 			out << endl;
 			out << "output:\n\t\t\t\t";
-			const auto& token(token_stream[i]);
+			const auto& cur_symbol(token_stream[i].type);
 			if (parsing_stack.top().which() == TERMINAL) {
-				if (boost::get<TokenType>(parsing_stack.top()) == token.type) {
+				if (boost::get<TokenType>(parsing_stack.top()) == cur_symbol) {
 					++i;
 				} else {
 					//handle error
@@ -62,7 +62,11 @@ namespace LL {
 					left_sentencial_form.second.pop_front();
 				}
 			} else {
-				auto res(parser.parsing_table[parsing_stack.top()].find(token.type));
+				auto res(
+					parser.parsing_table[
+						parsing_stack.top()
+					].find(cur_symbol)
+				);
 				if (res != parser.parsing_table[parsing_stack.top()].end()) {
 					Symbol nonterminal(std::move(parsing_stack.top()));
 					parsing_stack.pop();
@@ -100,7 +104,7 @@ namespace LL {
 	}
 
 	void Parser::construct_parsing_table() {
-		grammar.augment();
+		grammar.remove_epsilon_production();
 		grammar.remove_left_recursion();
 		grammar.print_productions();
 		grammar.extract_common_left_factor();

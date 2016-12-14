@@ -40,7 +40,7 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 			cur_token.col = cur_col;
 			expects_new_token = false; 
 		}
-		dfa.trans(c); 
+		dfa.transit(c); 
 		if (dfa.needs_retract()) { 
 			in.putback(c); 
 		} else {

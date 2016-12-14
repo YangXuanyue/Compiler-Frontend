@@ -41,7 +41,7 @@ private:
 	vector<set<Symbol>> first_of_production;
 	map<Symbol, set<Symbol>> first, follow;
 	map<Symbol, bool> has_constructed_first, has_constructed_follow;
-	map<Symbol, map<Symbol, bool>> includes_follow_of;
+	map<Symbol, map<Symbol, bool>> includes_first_of, includes_follow_of;
 
 	Grammar();
 
@@ -56,6 +56,7 @@ public:
 	void print_first();
 	void print_follow();
 	void augment();
+	void remove_epsilon_production();
 	void remove_left_recursion();
 	void extract_common_left_factor();
 	void construct_first();

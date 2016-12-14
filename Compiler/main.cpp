@@ -9,11 +9,11 @@ using std::cin;
 
 int main() {
 	Lexer lexer('\n');
-	#ifndef LL
+	#ifdef LL
 	LL::Parser parser;
 	#else
 	LR::Parser parser;
-	#endif
+	#endif 
 	while (true) {
 		cout << "input string:\n\t\t\t\t";
 		cin >> lexer >> parser;

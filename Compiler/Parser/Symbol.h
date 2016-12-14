@@ -16,4 +16,4 @@ enum SymbolType {
 
 typedef variant<string, TokenType> Symbol;
 
-void print_symbol(ostream& out, const Symbol& symbol);
+ostream& print_symbol(ostream& out, const Symbol& symbol);
