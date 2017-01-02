@@ -8,61 +8,70 @@ using std::deque;
 namespace LR {
 	ostream& out(cout);
 
-	Parser& operator >> (const Lexer& lexer, Parser& parser) {
-		const auto& token_stream(lexer.get_token_stream());
-		if (token_stream.front().type == END) {
-			return parser;
-		}
-		deque<pair<int, Symbol>> parsing_stack;
-		parsing_stack.push_back({0, END});
-		const auto& productions(grammar.get_productions());
-		for (int i(0); i < token_stream.size(); ) {
-			for (int j(0); j < parsing_stack.size(); ++j) {
-				print_symbol(
-					cout << "[" << parsing_stack[j].first << " ",
-					parsing_stack[j].second
-				) << "] ";
-			}
-			cout << endl;
-			const Symbol& cur_symbol(token_stream[i].type);
-			print_symbol(cout, cur_symbol) << endl;
-			auto res(
-				parser.action_table[
-					parsing_stack.back().first
-				].find(cur_symbol)
-			);
-			if (res != parser.action_table[parsing_stack.back().first].end()) {
-				const auto& action(res->second);
-				switch (action.type) {
-					case SHIFT:
-						parsing_stack.push_back({action.val, cur_symbol});
-						++i;
-						break;
-					case REDUCE: {
-						const auto& production(productions[action.val]);
-						out << production;
-						const auto& nonterminal(production.left);
-						for (int j(production.right.size()); j--; parsing_stack.pop_back());
-						int nxt(
-							parser.goto_table[
-								parsing_stack.back().first
-							][
-								nonterminal
-							]
-						);
-						parsing_stack.push_back({nxt, nonterminal});
-						break;
-					}
-					case ACC:
-						return parser;
-				}
-			} else {
-				out << "error\n";
-				return parser;
-			}
-		}
+Parser& operator >>(const Lexer& lexer, Parser& parser) {
+	const auto& token_stream(lexer.get_token_stream());
+	if (token_stream.front().type == END) {
 		return parser;
 	}
+	deque<pair<int, Symbol>> parsing_stack;
+	//将I0入栈
+	parsing_stack.push_back({0, END});
+	const auto& productions(grammar.get_productions());
+	for (int i(0); i < token_stream.size(); ) {
+		out << endl;
+		out << "current parsing stack:\n\t\t\t\t";
+		for (int j(0); j < parsing_stack.size(); ++j) {
+			print_symbol(
+				out << "[" << parsing_stack[j].first << " ",
+				parsing_stack[j].second
+			) << "] ";
+		}
+		out << endl;
+		const Symbol& cur_symbol(token_stream[i].type);
+		out << "current token stream:\n\t\t\t\t";
+		for (int j(i); j < token_stream.size(); ++j) {
+			print_symbol(out, token_stream[j].type) << " ";
+		}
+		out << endl;
+		out << "output:\n\t\t\t\t";
+		auto res(
+			parser.action_table[
+				parsing_stack.back().first
+			].find(cur_symbol)
+		);
+		if (res != parser.action_table[parsing_stack.back().first].end()) {
+			const auto& action(res->second);
+			out << action;
+			switch (action.type) {
+				case SHIFT: //移进
+					parsing_stack.push_back({action.val, cur_symbol});
+					++i;
+					break;
+
+				case REDUCE: { //归约
+					const auto& production(productions[action.val]);
+					const auto& nonterminal(production.left);
+					for (int j(production.right.size()); j--; parsing_stack.pop_back());
+					int nxt(
+						parser.goto_table[
+							parsing_stack.back().first
+						][
+							nonterminal
+						]
+					);
+					parsing_stack.push_back({nxt, nonterminal});
+					break;
+				}
+				case ACC: //接受
+					return parser;
+			}
+		} else {
+			out << "error\n";
+			return parser;
+		}
+	}
+	return parser;
+}
 
 	void Parser::construct_parsing_table() {
 		grammar.augment();

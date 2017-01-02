@@ -51,6 +51,9 @@
     <ClCompile Include="Parser\LR\ItemSet.cpp">
       <Filter>Parser\LR</Filter>
     </ClCompile>
+    <ClCompile Include="Parser\LR\ErrorMsgs.cpp">
+      <Filter>Parser\LR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer\Lexer.h">
@@ -88,6 +91,9 @@
       <Filter>Parser\LR</Filter>
     </ClInclude>
     <ClInclude Include="Parser\LR\Action.h">
+      <Filter>Parser\LR</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser\LR\ErrorMsgs.h">
       <Filter>Parser\LR</Filter>
     </ClInclude>
   </ItemGroup>

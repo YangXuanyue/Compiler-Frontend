@@ -9,7 +9,7 @@ using std::cin;
 
 int main() {
 	Lexer lexer('\n');
-	#ifdef LL
+	#ifdef LL_PARSE
 	LL::Parser parser;
 	#else
 	LR::Parser parser;

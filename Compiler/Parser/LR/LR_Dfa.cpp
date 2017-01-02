@@ -12,7 +12,6 @@ namespace LR {
 			].begin()
 		);
 		ItemSet start_item_set({Item(start_production_idx, 0)});
-		//cout << start_item_set << endl;
 		item_sets.emplace_back(std::move(start_item_set));
 		states.push_back({});
 		//bfs
@@ -45,8 +44,5 @@ namespace LR {
 			}
 		}
 		state_num = states.size();
-		/*for (const auto& item_set : item_sets) {
-			cout << "===\n" << item_set << "===\n";
-		}*/
 	}
 }

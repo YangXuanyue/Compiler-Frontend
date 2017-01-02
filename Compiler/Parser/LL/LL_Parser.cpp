@@ -39,8 +39,7 @@ namespace LL {
 			out << endl;
 			out << "current token stream:\n\t\t\t\t";
 			for (int j(i); j < token_stream.size(); ++j) {
-				print_symbol(out, token_stream[j].type);
-				out << " ";
+				print_symbol(out, token_stream[j].type) << " ";
 			}
 			out << endl;
 			out << "output:\n\t\t\t\t";
@@ -106,13 +105,13 @@ namespace LL {
 	void Parser::construct_parsing_table() {
 		grammar.remove_epsilon_production();
 		grammar.remove_left_recursion();
-		grammar.print_productions();
-		grammar.extract_common_left_factor();
 		//grammar.print_productions();
+		grammar.extract_common_left_factor();
+		grammar.print_productions();
 		grammar.construct_first();
-		//grammar.print_first();
+		grammar.print_first();
 		grammar.construct_follow();
-		//grammar.print_follow();
+		grammar.print_follow();
 		for (const auto& nonterminal : grammar.nonterminals) {
 			for (int i : grammar.production_idxes[nonterminal]) {
 				bool has_epsilon = false;

@@ -24,6 +24,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Parser\Grammar.cpp" />
     <ClCompile Include="Parser\LL\LL_Parser.cpp" />
+    <ClCompile Include="Parser\LR\ErrorMsgs.cpp" />
     <ClCompile Include="Parser\LR\ItemSet.cpp" />
     <ClCompile Include="Parser\LR\LR_Dfa.cpp" />
     <ClCompile Include="Parser\LR\Item.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="Parser\Grammar.h" />
     <ClInclude Include="Parser\LL\LL_Parser.h" />
     <ClInclude Include="Parser\LR\Action.h" />
+    <ClInclude Include="Parser\LR\ErrorMsgs.h" />
     <ClInclude Include="Parser\LR\ItemSet.h" />
     <ClInclude Include="Parser\LR\LR_Dfa.h" />
     <ClInclude Include="Parser\LR\Item.h" />
