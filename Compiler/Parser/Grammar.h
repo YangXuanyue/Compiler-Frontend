@@ -91,3 +91,5 @@ public:
 };
 
 #define grammar Grammar::get_instance()
+
+extern inline bool is_int_or_real(TokenType type);

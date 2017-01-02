@@ -13,7 +13,7 @@ namespace LL {
 	//ofstream out("../Compiler/Parser/parser_output.txt");
 	ostream& out(cout);
 
-	Parser& operator >> (const Lexer& lexer, Parser& parser) {
+	Parser& operator >>(const Lexer& lexer, Parser& parser) {
 		const auto& token_stream(lexer.get_token_stream());
 		if (token_stream.front().type == END) {
 			return parser;

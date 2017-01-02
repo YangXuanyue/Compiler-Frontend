@@ -100,7 +100,9 @@ enum TokenType {
 	LINE_COMMENT,
 	BLOCK_COMMENT,
 	IDENTIFIER,
-	NUMERIC_CONSTANT,
+	//NUMERIC_CONSTANT,
+	INT_CONSTANT,
+	REAL_CONSTANT,
 	CHAR_CONSTANT,
 	STRING_LITERAL,
 	INCOMPLETE_NUMERIC_CONSTANT_ERROR,
@@ -110,7 +112,7 @@ enum TokenType {
 	ILLEGAL_CHAR_ERROR,
 };
 
-extern const array<string, TOKEN_TYPE_NUM> token_type_strings;
+extern const array<string, TOKEN_TYPE_NUM> token_type_strs;
 extern const array<string, TOKEN_TYPE_NUM> token_vals;
 
 template <typename V, V DefaultVal>

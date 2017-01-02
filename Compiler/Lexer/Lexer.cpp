@@ -2,6 +2,7 @@
 #include <iostream>
 #include "../SymbolTable.h"
 #include "../Trie.h"
+#include <boost/lexical_cast.hpp>
 
 inline bool is_blank_char(char c) {
 	return (c == ' ') || (c == '\n') || (c == '\t') || (c == '\0');
@@ -72,7 +73,8 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 				case LINE_COMMENT:
 				case BLOCK_COMMENT:
 				case IDENTIFIER:
-				case NUMERIC_CONSTANT:
+				case INT_CONSTANT:
+				case REAL_CONSTANT:
 				case CHAR_CONSTANT:
 				case STRING_LITERAL: {
 					int pos(idx_in_symbol_table.search(cur_symbol));
@@ -88,6 +90,15 @@ const Lexer& operator >>(istream& in, Lexer& lexer) {
 					cur_token.symbol_idx = cur_token.type;
 			}
 			lexer.token_stream.push_back(cur_token); 
+			if (cur_token.type == INT_CONSTANT) {
+				lexer.token_stream.back().val = boost::lexical_cast<long long>(
+					symbol_table[cur_token.symbol_idx]
+				);
+			} else if (cur_token.type == REAL_CONSTANT) {
+				lexer.token_stream.back().val = boost::lexical_cast<double>(
+					symbol_table[cur_token.symbol_idx]
+				);
+			}
 			++lexer.token_type_cnts[cur_token.type]; 
 			cur_symbol.clear();
 			expects_new_token = true;

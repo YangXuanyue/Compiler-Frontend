@@ -1,6 +1,6 @@
 #include "TokenType.h"
 
-const array<string, TOKEN_TYPE_NUM> token_type_strings = {
+const array<string, TOKEN_TYPE_NUM> token_type_strs = {
 	"UNKNOWN",
 	"CHAR",
 	"INT",
@@ -83,7 +83,9 @@ const array<string, TOKEN_TYPE_NUM> token_type_strings = {
 	"LINE_COMMENT",
 	"BLOCK_COMMENT",
 	"IDENTIFIER",
-	"NUMERIC_CONSTANT",
+	//"NUMERIC_CONSTANT",
+	"INT_CONSTANT",
+	"REAL_CONSTANT",
 	"CHAR_LITERAL",
 	"STRING_LITERAL",
 	"INCOMPLETE_NUMERIC_CONSTANT_ERROR",
@@ -176,7 +178,9 @@ const array<string, TOKEN_TYPE_NUM> token_vals = {
 	"line_coment",
 	"block_comment",
 	"id",
-	"num",
+	//"num",
+	"int_num",
+	"real_num",
 	"char_constant",
 	"string_literal",
 	"INCOMPLETE_NUMERIC_CONSTANT_ERROR",

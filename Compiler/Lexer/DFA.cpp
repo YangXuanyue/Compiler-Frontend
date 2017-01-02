@@ -122,7 +122,7 @@ Dfa::Dfa() {
 	
 	cur = 7;
 	fill(states[cur].next, states[cur].next + SIGMA_SIZE, START);
-	fill(states[cur].output, states[cur].output + SIGMA_SIZE, NUMERIC_CONSTANT);
+	fill(states[cur].output, states[cur].output + SIGMA_SIZE, INT_CONSTANT);
 	states[cur].retract_flg.set();
 	states[cur].retract_flg.reset('\n');
 	states[cur].retract_flg.reset('\t');
@@ -144,7 +144,7 @@ Dfa::Dfa() {
 	
 	cur = 8;
 	fill(states[cur].next, states[cur].next + SIGMA_SIZE, START);
-	fill(states[cur].output, states[cur].output + SIGMA_SIZE, NUMERIC_CONSTANT);
+	fill(states[cur].output, states[cur].output + SIGMA_SIZE, REAL_CONSTANT);
 	states[cur].retract_flg.set();
 	states[cur].retract_flg.reset('\n');
 	states[cur].retract_flg.reset('\t');
@@ -189,7 +189,7 @@ Dfa::Dfa() {
 	
 	cur = 11;
 	fill(states[cur].next, states[cur].next + SIGMA_SIZE, START);
-	fill(states[cur].output, states[cur].output + SIGMA_SIZE, NUMERIC_CONSTANT);
+	fill(states[cur].output, states[cur].output + SIGMA_SIZE, REAL_CONSTANT);
 	states[cur].retract_flg.set();
 	states[cur].retract_flg.reset('\n');
 	states[cur].retract_flg.reset('\t');
