@@ -20,9 +20,9 @@ inline bool is_int_or_real(TokenType type) {
 	return type == INT_CONSTANT || type == REAL_CONSTANT;
 }
 
-inline TokenType get_composite_type(TokenType type1, TokenType type2) {
-	if (is_int_or_real(type1) && is_int_or_real(type2)) {
-		return (type1 == REAL_CONSTANT || type2 == REAL_CONSTANT)?
+inline TokenType get_bin_op_res_type(TokenType lhs_type, TokenType rhs_type) {
+	if (is_int_or_real(lhs_type) && is_int_or_real(rhs_type)) {
+		return (lhs_type == REAL_CONSTANT || rhs_type == REAL_CONSTANT)?
 			REAL_CONSTANT : INT_CONSTANT;
 	} else {
 		return UNKNOWN;
@@ -56,39 +56,39 @@ Grammar::Grammar() :
 						t(parsing_stack.size() - 1),
 						nt(parsing_stack.size() - 3);
 					TokenType
-						type1(std::get<TYPE>(parsing_stack[t])),
-						type2(std::get<TYPE>(parsing_stack[t - 2])),
-						type = get_composite_type(type1, type2);
+						lhs_type(std::get<TYPE>(parsing_stack[t - 2])),
+						rhs_type(std::get<TYPE>(parsing_stack[t])),
+						type = get_bin_op_res_type(lhs_type, rhs_type);
 					std::get<TYPE>(parsing_stack[nt]) = type;
 					switch (type) {
 						case INT_CONSTANT: {
 							long long
-								val1(
+								lhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t]), type1
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
 									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
+										std::get<VAL>(parsing_stack[t]), rhs_type
 									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 + val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val + rhs_val;
 							return;
 						}
 						case REAL_CONSTANT: {
 							double
-								val1(
+								lhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t]), type1
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
 									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
+										std::get<VAL>(parsing_stack[t]), rhs_type
 									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 + val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val + rhs_val;
 							return;
 						}
 					}
@@ -101,39 +101,39 @@ Grammar::Grammar() :
 						t(parsing_stack.size() - 1),
 						nt(parsing_stack.size() - 3);
 					TokenType
-						type1(std::get<TYPE>(parsing_stack[t])),
-						type2(std::get<TYPE>(parsing_stack[t - 2])),
-						type = get_composite_type(type1, type2);
+						lhs_type(std::get<TYPE>(parsing_stack[t - 2])),
+						rhs_type(std::get<TYPE>(parsing_stack[t])),
+						type = get_bin_op_res_type(lhs_type, rhs_type);
 					std::get<TYPE>(parsing_stack[nt]) = type;
 					switch (type) {
 						case INT_CONSTANT: {
 							long long
-								val1(
+								lhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t]), type1
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
 									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
+										std::get<VAL>(parsing_stack[t]), rhs_type
 									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 - val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val - rhs_val;
 							return;
 						}
 						case REAL_CONSTANT: {
 							double
-								val1(
+								lhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t]), type1
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
 									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
+										std::get<VAL>(parsing_stack[t]), rhs_type
 									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 - val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val - rhs_val;
 							return;
 						}
 					}
@@ -149,39 +149,39 @@ Grammar::Grammar() :
 						t(parsing_stack.size() - 1),
 						nt(parsing_stack.size() - 3);
 					TokenType
-						type1(std::get<TYPE>(parsing_stack[t])),
-						type2(std::get<TYPE>(parsing_stack[t - 2])),
-						type = get_composite_type(type1, type2);
+						lhs_type(std::get<TYPE>(parsing_stack[t - 2])),
+						rhs_type(std::get<TYPE>(parsing_stack[t])),
+						type = get_bin_op_res_type(lhs_type, rhs_type);
 					std::get<TYPE>(parsing_stack[nt]) = type;
 					switch (type) {
 						case INT_CONSTANT: {
 							long long
-								val1(
+								lhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t]), type1
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
 									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
+										std::get<VAL>(parsing_stack[t]), rhs_type
 									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 * val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val * rhs_val;
 							return;
 						}
 						case REAL_CONSTANT: {
 							double
-								val1(
+								lhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t]), type1
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
 									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
+										std::get<VAL>(parsing_stack[t]), rhs_type
 									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 * val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val * rhs_val;
 							return;
 						}
 					}
@@ -194,41 +194,39 @@ Grammar::Grammar() :
 						t(parsing_stack.size() - 1),
 						nt(parsing_stack.size() - 3);
 					TokenType
-						type1(std::get<TYPE>(parsing_stack[t])),
-						type2(std::get<TYPE>(parsing_stack[t - 2])),
-						type = get_composite_type(type1, type2);
+						lhs_type(std::get<TYPE>(parsing_stack[t - 2])),
+						rhs_type(std::get<TYPE>(parsing_stack[t])),
+						type = get_bin_op_res_type(lhs_type, rhs_type);
 					std::get<TYPE>(parsing_stack[nt]) = type;
 					switch (type) {
-						case INT_CONSTANT:
-						{
+						case INT_CONSTANT: {
 							long long
-								val1(
+								lhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t]), type1
-										)
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
+									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<long long>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
-										)
+										std::get<VAL>(parsing_stack[t]), rhs_type
+									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 / val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val / rhs_val;
 							return;
 						}
-						case REAL_CONSTANT:
-						{
+						case REAL_CONSTANT: {
 							double
-								val1(
+								lhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t]), type1
-										)
+										std::get<VAL>(parsing_stack[t - 2]), lhs_type
+									)
 								),
-								val2(
+								rhs_val(
 									get_val_by_type<double>(
-										std::get<VAL>(parsing_stack[t - 2]), type2
-										)
+										std::get<VAL>(parsing_stack[t]), rhs_type
+									)
 								);
-							std::get<VAL>(parsing_stack[nt]) = val1 / val2;
+							std::get<VAL>(parsing_stack[nt]) = lhs_val / rhs_val;
 							return;
 						}
 					}
