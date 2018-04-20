@@ -5,3 +5,4 @@
  - [ ] Construct the parsing tree while parsing.
  - [ ] Construct the AST.
  - [ ] Add a sementic analyzer.
+ - [ ] Use python-style generator (or coroutine) to refactor the `lexer`-`parser` pipeline. 
